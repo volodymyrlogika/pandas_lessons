@@ -1,13 +1,29 @@
 import pandas as pd
 df = pd.read_csv('GooglePlayStore_wild.csv')
 # Виведи інформацію про всі DataFrame, щоб дізнатися, які стовпці потребують очищення
+df.info()
 # Скільки в датасеті додатків, у яких не вказано (NaN) рейтинг (Rating)?
-
+result = df[pd.isnull(df['Rating'])]
 # Заміни порожнє значення ('NaN') рейтингу ('Rating') для таких програм на -1.
+df['Rating'].fillna(-1, inplace=True)
+df.dropna(inplace=True)    
+df.info()
 
 # Визнач, яке ще значення розміру ('Size') зберігається в датасеті крім Кілобайтів та Мегабайтів, заміни його на -1.
 # Перетвори розміри додатків ('Size') у числовий формат (float). Розмір усіх програм повинен вимірюватися в Мегабайтах.
+print(df['Size'].value_counts())
 
+def set_size(size):
+    if size[-1] == 'M':
+        return float(size[:-1])
+    elif size[-1] == 'k':
+        result = float(size[:-1]) / 1024
+        return result
+    else:
+        return -1
+
+df['Size'] = df['Size'].apply(set_size)
+df.info()
 # Чому дорівнює максимальний розмір ('Size') додатків з категорії ('Category') 'TOOLS'?
 
 # Бонусні завдання
@@ -23,3 +39,5 @@ df = pd.read_csv('GooglePlayStore_wild.csv')
 # У якої програми не вказаний тип ('Type')? Який тип там потрібно записати залежно від ціни?
 
 # Виведи інформацію про все DataFrame, щоб переконатися, що очищення пройшло успішно
+df.to_csv('cleaned.csv')
+
